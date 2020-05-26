@@ -9,7 +9,7 @@ from cloudinary.utils import cloudinary_url
 
 from cloudinary_cli.defaults import logger
 from cloudinary_cli.utils.json_utils import print_json, write_json_to_file
-from cloudinary_cli.utils.utils import print_help, parse_args_kwargs, parse_option_value, log_exception
+from cloudinary_cli.utils.utils import print_help, parse_args_kwargs, parse_option_value, log_exception, confirm_action
 
 
 def query_cld_folder(folder):
@@ -65,6 +65,8 @@ def handle_api_command(
         params,
         optional_parameter,
         optional_parameter_parsed,
+        recursive,
+        cursor,
         ls,
         save,
         doc,
@@ -89,11 +91,31 @@ def handle_api_command(
 
     args, kwargs = parse_args_kwargs(func, params[1:]) if len(params) > 1 else ([], {})
 
+    if recursive and cursor is None:
+        raise Exception("Using the `--recursive` flag requires a `--recursive_cursor` flag.")
+
     res = func(*args, **{
         **kwargs,
         **{k: v for k, v in optional_parameter},
         **{k: parse_option_value(v) for k, v in optional_parameter_parsed},
     })
+
+    if recursive and confirm_action("Using the --recursive flag will use multiple API calls. Continue?"):
+        all_results = res
+
+        while True:
+            res = func(*args, **{
+                **kwargs,
+                **{k: v for k, v in optional_parameter},
+                **{k: parse_option_value(v) for k, v in optional_parameter_parsed},
+                **{cursor: res[cursor]}
+            })
+            all_results[recursive] += res[recursive]
+
+            if cursor not in res.keys():
+                del all_results[cursor]
+                break
+        res = all_results
 
     print_json(res)
 

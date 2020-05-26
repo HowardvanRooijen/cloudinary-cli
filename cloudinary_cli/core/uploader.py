@@ -23,11 +23,15 @@ Format: cld <cli options> uploader <command options> <method> <method parameters
 @option("-o", "--optional_parameter", multiple=True, nargs=2, help="Pass optional parameters as raw strings.")
 @option("-O", "--optional_parameter_parsed", multiple=True, nargs=2,
         help="Pass optional parameters as interpreted strings.")
+@option("--recursive", nargs=1, help="Query a field in the response recursively.")
+@option("--cursor", nargs=1, help="Cursor field to use when using the --recursive flag.")
 @option("-ls", "--ls", is_flag=True, help="List all available methods in the Upload API.")
 @option("--save", nargs=1, help="Save output to a file.")
 @option("-d", "--doc", is_flag=True, help="Open the Upload API reference in a browser.")
-def uploader(params, optional_parameter, optional_parameter_parsed, ls, save, doc):
-    return handle_api_command(params, optional_parameter, optional_parameter_parsed, ls, save, doc,
+def uploader(params, optional_parameter, optional_parameter_parsed, recursive, cursor, ls, save, doc):
+    return handle_api_command(params, optional_parameter, optional_parameter_parsed,
+                              recursive, cursor,
+                              ls, save, doc,
                               doc_url="https://cloudinary.com/documentation/image_upload_api_reference",
                               api_instance=upload_api,
                               api_name="upload")

@@ -19,11 +19,15 @@ Format: cld <cli options> admin <command options> <method> <method parameters>
 @option("-o", "--optional_parameter", multiple=True, nargs=2, help="Pass optional parameters as raw strings.")
 @option("-O", "--optional_parameter_parsed", multiple=True, nargs=2,
         help="Pass optional parameters as interpreted strings.")
+@option("--recursive", nargs=1, help="Query a field in the response recursively.")
+@option("--cursor", nargs=1, help="Cursor field to use when using the --recursive flag.")
 @option("-ls", "--ls", is_flag=True, help="List all available methods in the Admin API.")
 @option("--save", nargs=1, help="Save output to a file.")
 @option("-d", "--doc", is_flag=True, help="Open the Admin API reference in a browser.")
-def admin(params, optional_parameter, optional_parameter_parsed, ls, save, doc):
-    return handle_api_command(params, optional_parameter, optional_parameter_parsed, ls, save, doc,
+def admin(params, optional_parameter, optional_parameter_parsed, recursive, cursor, ls, save, doc):
+    return handle_api_command(params, optional_parameter, optional_parameter_parsed,
+                              recursive, cursor,
+                              ls, save, doc,
                               doc_url="https://cloudinary.com/documentation/admin_api",
                               api_instance=api,
                               api_name="admin")
