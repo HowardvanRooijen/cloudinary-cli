@@ -5,6 +5,6 @@ __pycache__
 dist
 .eggs
 env
+venv
 .vscode
 .idea
-
